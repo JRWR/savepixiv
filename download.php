@@ -42,6 +42,28 @@ if($getamf["returncode"] != 200){echo "AMF returned {$getamf['returncode']}, sle
 file_put_contents("stor/$x/$getamfid.amf", $getamf["content"]);
 $apicur = $apirow;
 }
+//download images
+  $re1='(roomstepimg\\.php)';   # File Name 1
+  $re2='(\\?)'; # Any Single Character 1
+  $re3='(id)';  # US State 1
+  $re4='(=)';   # Any Single Character 2
+  $re5='(\\d+)';        # Integer Number 1
+  $re6='(&)';   # Any Single Character 3
+  $re7='(pos)'; # Word 1
+  $re8='(=)';   # Any Single Character 4
+  $re9='(\\d+)';        # Integer Number 2
+  //regex made with txt2re because I'm bad
+  if ($c=preg_match_all ("/".$re1.$re2.$re3.$re4.$re5.$re6.$re7.$re8.$re9."/is", $roomhtml["content"], $matches))
+  {
+        foreach($matches[9] as $imgid){
+                // http://chat-img01.pixiv.net/000/000/125/fe1a5740/layer0_295.png
+                $L1 = downloadfile('http://'.$srv.'.pixiv.net/'.$splitid[0].'/'.$splitid[1].'/'.$splitid[2].'/'.$logid.'/layer0_'.$imgid.'.png', 'http://chat.pixiv.net/');
+                $L2 = downloadfile('http://'.$srv.'.pixiv.net/'.$splitid[0].'/'.$splitid[1].'/'.$splitid[2].'/'.$logid.'/layer1_'.$imgid.'.png', 'http://chat.pixiv.net/');
+                file_put_contents("stor/$x/layer1_$imgid.png", $L1["content"]); file_put_contents("stor/$x/layer0_$imgid.png", $L2["content"]); echo "Downloaded Img $imgid" . PHP_EOL;
+        }
+  }
+
+
 $x = $x + 1;
 file_put_contents("state", $x);
 echo "wrote state $x";
